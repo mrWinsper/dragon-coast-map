@@ -98,7 +98,7 @@ body::after { /* зерно поверх фона, чтобы изумруд н�
 body.video .head, body.video .bar, body.video .tip { display: none; }
 body.video .stage-wrap { inset: 0 0 70px 0; }
 body.video .scroll { width: 55vw; }
-body.video .viewport { cursor: default; }
+body.video .viewport { cursor: default; will-change: auto; }   /* без will-change браузер перерастрирует слой в каждом кадре, а не растягивает старый */
 body.alpha { background: transparent; }
 body.alpha::after { display: none; }
 .bar button { font: inherit; font-size: 14px; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); cursor: pointer;
@@ -317,7 +317,8 @@ async function tex(url, unit, name){
 }
 function resize(){
   const r = cv.getBoundingClientRect();
-  const k = Math.min(window.devicePixelRatio * 1.5, 3372 / Math.max(r.width, 1));
+  // в видео шейдер рисуем в полном разрешении листа, иначе после наклона и наезда карта мылится
+  const k = VIDEO ? 3372 * 1.25 / Math.max(r.width, 1) : Math.min(window.devicePixelRatio * 1.5, 3372 / Math.max(r.width, 1));
   cv.width = Math.round(r.width * k); cv.height = Math.round(r.height * k);
   gl.viewport(0, 0, cv.width, cv.height);
 }
